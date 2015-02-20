@@ -1,12 +1,9 @@
 #!/usr/bin/env python
 
 import os
-import stat
-import errno
 import logging
 import fuse
-from fuse import Fuse
-from time import time
+import time
 
 import toy
 
@@ -21,16 +18,16 @@ logger.setLevel(logging.INFO)
 fs = toy.Toy()
 
 # ToyFS
-class ToyFS(Fuse):
+class ToyFS(fuse.Fuse):
     def getattr(self, path):
-        logger.info("getattr(path=%s)" % path)
+        logger.info("[getattr] (path=%s)" % path)
         st = fs.getattr(path)
-        logger.info(st)
         return st
 
     def readdir(self, path, offset):            
-        logger.info("readdir(path=%s, offset=%s)" % (path, offset))
-        directories = fs.readdir(path)
+        logger.info("[readdir] (path=%s, offset=%s)" % (path, offset))
+        directories = tuple(fs.readdir(path))
+        logger.info(directories)
         for directory in directories:
             yield fuse.Direntry(directory)
 

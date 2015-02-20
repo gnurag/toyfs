@@ -1,11 +1,14 @@
 import fuse
+import stat
+import errno
+import time
 
 class ToyStat(fuse.Stat):
     def __init__(self):
         """
         The following stat structure members are implemented.
         """
-        self.st_mode  = 33206  # (protection bits)
+        self.st_mode  = 0      # (protection bits)
         self.st_ino   = 0      # (inode number)
         self.st_dev   = 0      # (device)
         self.st_nlink = 0      # (number of hard links)
@@ -16,15 +19,20 @@ class ToyStat(fuse.Stat):
         self.st_mtime = 0      # (time of most recent content modification)
         self.st_ctime = 0      # (time of most recent metadata change)
 
+# Helper for Toy filesystem
 class Toy():
-    def getattr(path):
-        return ToyStat()
+    def __init__(self):
+        pass
+    
+    def getattr(self, path):
+        st = ToyStat()
+        st.st_mode = stat.S_IFDIR | 0755
+        return st
 
-    def readdir(path):
+    def readdir(self, path):
         contents = {
-            '/':      ['hello', 'world'],
-            '/hello': ['monde'],
-            '/hello/monde': ['last_level']
+            '/':      ['.', '..', 'hello', 'world'],
+            '/hello': ['.', '..', 'welt'],
+            '/hello/welt': ['.', '..', 'last_level']
         }
-        return contents.get(path, [])
-        
+        return contents.get(path, ['.', '..'])
