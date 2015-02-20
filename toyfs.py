@@ -26,11 +26,17 @@ class ToyFS(fuse.Fuse):
 
     def readdir(self, path, offset):            
         logger.info("[readdir] (path=%s, offset=%s)" % (path, offset))
-        directories = tuple(fs.readdir(path))
-        logger.info(directories)
+        directories = fs.readdir(path)
         for directory in directories:
             yield fuse.Direntry(directory)
 
+    def open(self, path, flags):
+        logger.info("[open] (path=%s, flags=%s)" % (path, flags))
+
+    def read(self, path, length, offset):
+        logger.info("[read] (path=%s, length=%s, offset=%s)" % (path, length, offset))
+        return fs.read(path, length, offset)
+    
 if __name__ == '__main__':
     toyfs = ToyFS(version = '%prog ' + '0.0.1',
                usage = 'Toy filesystem ' + fuse.Fuse.fusage,
