@@ -21,9 +21,6 @@ class ToyStat(fuse.Stat):
 
 # Helper for Toy filesystem
 class Toy():
-    def __init__(self):
-        pass
-    
     def getattr(self, path):
         st = ToyStat()
         st.st_mode = stat.S_IFDIR | 0755
@@ -31,8 +28,9 @@ class Toy():
 
     def readdir(self, path):
         contents = {
-            '/':      ['.', '..', 'hello', 'world'],
-            '/hello': ['.', '..', 'welt'],
-            '/hello/welt': ['.', '..', 'last_level']
+            '/':           ['hello', 'world'],
+            '/hello':      ['welt'],
+            '/hello/welt': ['last_level']
         }
-        return contents.get(path, ['.', '..'])
+        res = ['.','..'] + contents.get(path)
+        return res
